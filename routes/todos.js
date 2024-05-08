@@ -1,6 +1,8 @@
 const express = require('express');
 const router = express.Router();
 
+router.use(logger);
+
 // retrieve all
 router.get('/all', (req, res) => {
   res.json({ message: "View All!" });
@@ -9,6 +11,7 @@ router.get('/all', (req, res) => {
 // advanced routing
 router.route('/:id')
   .get((req, res) => { // retrieve one
+    // console.log({ queryParams: req.query.name }); example of getting query params
     res.json({ message: "Retrieve!", todoId: req.params.todoId });
   })
   .post((req, res) => { // create
@@ -21,10 +24,15 @@ router.route('/:id')
     res.json({ message: "Delete!", todoId: req.params.todoId });
   })
 
-// middleware
+// middlewares
 router.param("id", (req, res, next, id) => {
   req.params.todoId = id;
   next();
 })
+
+function logger(req, res, next) {
+  console.log({ originalUrl: req.originalUrl });
+  next();
+}
 
 module.exports = router;
